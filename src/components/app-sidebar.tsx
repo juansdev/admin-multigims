@@ -1,8 +1,7 @@
 "use client"
 
 import * as React from "react";
-import {IconDashboard, IconInnerShadowTop, IconSettings, IconUsers,} from "@tabler/icons-react";
-
+import {IconInnerShadowTop, IconSettings, IconUsers,} from "@tabler/icons-react";
 import {NavMain} from "@/components/nav-main";
 import {NavSecondary} from "@/components/nav-secondary";
 import {NavUser} from "@/components/nav-user";
@@ -21,21 +20,16 @@ import Link from "next/link";
 
 const data: IData = {
     user: {
-        name: "shadcn",
-        email: "m@example.com",
-        avatar: "/avatars/shadcn.jpg",
+        name: "JuanSDev",
+        email: "juansdev72@gmail.com",
+        avatar: "/avatars/avatar.jpeg",
     },
     navMain: [
-        {
-            title: "Dashboard",
-            url: "#",
-            icon: IconDashboard,
-        },
         {
             title: "Miembros",
             url: "#",
             icon: IconUsers,
-        },
+        }
     ],
     navSecondary: [
         {
