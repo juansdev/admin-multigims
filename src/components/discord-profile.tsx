@@ -1,7 +1,5 @@
 import React from 'react';
-import SpotifyCard from './spotify-card';
 import RoleTag from './role-tag';
-import {User, Monitor} from 'lucide-react';
 import {IDiscordProfileProps} from "@/interfaces/components/discord-profile.interface";
 import Image from "next/image";
 
@@ -10,14 +8,13 @@ const DiscordProfile: React.FC<IDiscordProfileProps> = ({
                                                             handle,
                                                             status,
                                                             aboutMe,
-                                                            birthDate,
+                                                            memberDate,
                                                             roles,
                                                             avatarUrl,
-                                                            bannerUrl,
-                                                            spotifyData
+                                                            bannerUrl
                                                         }) => {
     return (
-        <div className="w-full max-w-md mx-auto overflow-hidden rounded-lg bg-discord-dark-blue">
+        <div className="w-full max-w-md mx-auto rounded-lg bg-discord-dark-blue">
             {/* Banner and Avatar */}
             <div className="relative h-28 bg-cover bg-center" style={{backgroundImage: `url(${bannerUrl})`}}>
                 <div className="absolute bottom-0 transform translate-y-1/2 left-4">
@@ -36,30 +33,23 @@ const DiscordProfile: React.FC<IDiscordProfileProps> = ({
             </div>
 
             {/* User Info */}
-            <div className="mt-12 px-4">
+            <div className="mt-12 mb-6 px-4">
                 <div className="bg-discord-card-bg rounded-lg p-4">
                     <h2 className="text-white text-xl font-bold">{username}</h2>
                     <p className="text-discord-text-secondary text-sm">{handle}</p>
                     <p className="text-white mt-1">{status}</p>
 
                     <div className="mt-3 border-t border-gray-700 pt-3">
-                        <h3 className="text-white font-bold text-sm uppercase">ABOUT ME</h3>
+                        <h3 className="text-white font-bold text-sm uppercase">SOBRE MÍ</h3>
                         {aboutMe.map((line, i) => (
                             <p key={i} className="text-discord-text-secondary text-sm mt-1">{line}</p>
                         ))}
                     </div>
 
-                    <div className="mt-3 flex gap-2">
-                        <User size={16} className="text-discord-text-secondary"/>
-                        <Monitor size={16} className="text-discord-text-secondary"/>
-                    </div>
-
                     <div className="mt-3 border-t border-gray-700 pt-3">
-                        <h3 className="text-white font-bold text-sm uppercase">IN THIS WORLD SINCE</h3>
-                        <p className="text-discord-text-secondary text-sm mt-1">{birthDate}</p>
+                        <h3 className="text-white font-bold text-sm uppercase">MIEMBRO DESDE</h3>
+                        <p className="text-discord-text-secondary text-sm mt-1">{memberDate}</p>
                     </div>
-
-                    <SpotifyCard {...spotifyData} />
 
                     <div className="mt-3 border-t border-gray-700 pt-3">
                         <h3 className="text-white font-bold text-sm uppercase mb-2">ROLES</h3>
