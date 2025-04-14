@@ -4,31 +4,37 @@ import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
-import Link from "next/link";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import React from "react";
 
-export function LoginForm({
-                              className,
-                              ...props
-                          }: Readonly<React.ComponentPropsWithoutRef<"div">>) {
+export function RecoveryPasswordForm({
+                                         className,
+                                         ...props
+                                     }: Readonly<React.ComponentPropsWithoutRef<"div">>) {
     const formSchema = z.object({
-        email: z
-            .string()
-            .min(1, {message: "Este campo debe ser diligenciado."})
-            .email("Esto no es un correo valido."),
         password: z
             .string()
+            .min(1, {message: "Este campo debe ser diligenciado."}),
+        confirmPassword: z
+            .string()
             .min(1, {message: "Este campo debe ser diligenciado."})
+    }).superRefine(({confirmPassword, password}, ctx) => {
+        if (confirmPassword !== password) {
+            ctx.addIssue({
+                code: "custom",
+                message: "La contraseña no coincide",
+                path: ['confirmPassword']
+            });
+        }
     });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            email: "",
-            password: ""
+            password: "",
+            confirmPassword: ""
         }
     });
 
@@ -40,9 +46,9 @@ export function LoginForm({
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-2xl">Iniciar sesión</CardTitle>
+                    <CardTitle className="text-2xl">Reestablecer contraseña</CardTitle>
                     <CardDescription>
-                        Ingrese tus credenciales debajo para ingresar
+                        Ingrese tu nueva contraseña debajo para reestablecer
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -50,12 +56,12 @@ export function LoginForm({
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                             <FormField
                                 control={form.control}
-                                name="email"
+                                name="password"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Correo electrónico</FormLabel>
+                                        <FormLabel>Nueva contraseña</FormLabel>
                                         <FormControl>
-                                            <Input required={true} type={"email"} {...field} />
+                                            <Input required={true} type={"password"} {...field} />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -63,10 +69,10 @@ export function LoginForm({
                             />
                             <FormField
                                 control={form.control}
-                                name="password"
+                                name="confirmPassword"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Contraseña</FormLabel>
+                                        <FormLabel>Repetir contraseña</FormLabel>
                                         <FormControl>
                                             <Input required={true} type={"password"} {...field} />
                                         </FormControl>
@@ -76,16 +82,8 @@ export function LoginForm({
                             />
                             <div className={"w-full"}>
                                 <Button type="submit" className="w-full">
-                                    Iniciar sesión
+                                    Envíar
                                 </Button>
-                            </div>
-                            <div className="grid">
-                                <Link
-                                    href="/forget-password"
-                                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                                >
-                                    ¿Olvido su contraseña?
-                                </Link>
                             </div>
                         </form>
                     </Form>
