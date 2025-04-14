@@ -17,13 +17,10 @@ import {
 import {IData} from "@/interfaces/data";
 import {ModeToggle} from "@/components/mode-toggle";
 import Link from "next/link";
+import userData from "@/data/user.json";
 
 const data: IData = {
-    user: {
-        name: "JuanSDev",
-        email: "juansdev72@gmail.com",
-        avatar: "/avatars/avatar.jpeg",
-    },
+    user: userData,
     navMain: [
         {
             title: "Miembros",

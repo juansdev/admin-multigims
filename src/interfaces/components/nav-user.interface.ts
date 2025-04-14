@@ -1,5 +1,5 @@
-import {IUser} from "@/interfaces/data";
+import {IUser} from "../data";
 
 export interface INavUser {
-    user: IUser
+    user: IUser;
 }
