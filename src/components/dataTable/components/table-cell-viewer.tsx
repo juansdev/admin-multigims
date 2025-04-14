@@ -12,7 +12,7 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer";
-import {useIsMobile} from "@/hooks/use-mobile";
+import {useIsMobile} from "@/hooks/use-mobile.hook";
 import DiscordProfile from "@/components/discord-profile";
 import {IDiscordProfileProps} from "@/interfaces/components/discord-profile.interface";
 

@@ -1,15 +1,7 @@
 "use client"
 
 import * as React from "react";
-import {
-    IconChevronDown,
-    IconCircle,
-    IconCircleCheckFilled,
-    IconDotsVertical,
-    IconGenderAgender,
-    IconLayoutColumns,
-    IconMoonFilled
-} from "@tabler/icons-react";
+import {IconChevronDown, IconDotsVertical, IconLayoutColumns,} from "@tabler/icons-react";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {
@@ -22,82 +14,57 @@ import {
 import {Label} from "@/components/ui/label";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import {Tabs, TabsContent, TabsList, TabsTrigger,} from "@/components/ui/tabs";
-import {IDataTable, ISchemaDataTable} from "@/interfaces/components/data-table.interface";
+import {IDataSelectors, IDataTable, ISchemaDataTable} from "@/interfaces/components/data-table.interface";
 import {TableTabsContent} from "@/components/dataTable/components/table-tabs-content";
-import {
-    ColumnDef,
-    ColumnFiltersState,
-    getCoreRowModel,
-    getFacetedRowModel,
-    getFacetedUniqueValues,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    SortingState,
-    useReactTable,
-    VisibilityState
-} from "@tanstack/react-table";
+import {ColumnDef, ColumnFiltersState, SortingState, VisibilityState} from "@tanstack/react-table";
 import {z} from "zod";
 import {DragHandle} from "@/components/ui/drag-handle";
 import {TableCellViewer} from "@/components/dataTable/components/table-cell-viewer";
+import {getRowStatusByStatus, updateDataSelectors} from "@/helpers/data-table.helper";
+import {GetTable} from "@/hooks/data-table.hook";
 
-
-const dataSelectors = {
-    creators_roblox: {
+const dataSelectors: IDataSelectors = {
+    all: {
         "id": 0,
+        "label": "Todos",
+        "quantity": 0
+    },
+    creators_roblox: {
+        "id": 1,
         "label": "Creadores Roblox",
         "quantity": 1
     },
     designers: {
-        "id": 1,
+        "id": 2,
         "label": "Diseñadores",
         "quantity": 7
     },
     editors: {
-        "id": 2,
+        "id": 3,
         "label": "Editores",
         "quantity": 5
     },
     programmers: {
-        "id": 3,
+        "id": 4,
         "label": "Programadores",
         "quantity": 10
     },
     moderators: {
-        "id": 4,
+        "id": 5,
         "label": "Moderadores",
         "quantity": 3
     },
     creators_minecraft: {
-        "id": 5,
+        "id": 6,
         "label": "Creadores Minecraft",
         "quantity": 8
     },
     marketing: {
-        "id": 6,
+        "id": 7,
         "label": "Marketing",
         "quantity": 2
     }
 };
-
-const getRowStatusByStatus = (status: string) => {
-    let rowStatus: React.JSX.Element;
-    switch (status) {
-        case "En línea":
-            rowStatus = <>{status} <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400"/></>;
-            break;
-        case "Ausente":
-            rowStatus = <>{status} <IconMoonFilled className="fill-yellow-600 dark:fill-yellow-500"/></>;
-            break;
-        case "No molestar":
-            rowStatus = <>{status} <IconGenderAgender className="fill-red-700 dark:fill-red-600"/></>;
-            break;
-        default:
-            rowStatus = <>{status} <IconCircle className="fill-neutral-500 dark:fill-neutral-400"/></>;
-            break;
-    }
-    return rowStatus;
-}
 
 const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
     {
@@ -174,33 +141,10 @@ export function DataTable({data}: Readonly<IDataTable>) {
         pageIndex: 0,
         pageSize: 10,
     });
-    const table = useReactTable({
-        data,
-        columns,
-        state: {
-            sorting,
-            columnVisibility,
-            rowSelection,
-            columnFilters,
-            pagination,
-        },
-        getRowId: (row) => row.id.toString(),
-        enableRowSelection: true,
-        onRowSelectionChange: setRowSelection,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        onColumnVisibilityChange: setColumnVisibility,
-        onPaginationChange: setPagination,
-        getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFacetedRowModel: getFacetedRowModel(),
-        getFacetedUniqueValues: getFacetedUniqueValues()
-    });
+    const updatedDataSelectors = updateDataSelectors(dataSelectors);
     return (
         <Tabs
-            defaultValue="outline"
+            defaultValue="all"
             className="w-full flex-col justify-start gap-3"
         >
             <div className="flex flex-col items-start justify-start px-4 lg:px-6 gap-3">
@@ -216,9 +160,8 @@ export function DataTable({data}: Readonly<IDataTable>) {
                         <SelectValue placeholder="Select a view"/>
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value={"all"}>Todos</SelectItem>
                         {
-                            Object.entries(dataSelectors).map(
+                            Object.entries(updatedDataSelectors).map(
                                 ([key, value]) =>
                                     <SelectItem key={value.id} value={key}>{value.label}</SelectItem>
                             )
@@ -227,15 +170,10 @@ export function DataTable({data}: Readonly<IDataTable>) {
                 </Select>
                 <TabsList
                     className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-                    <TabsTrigger value="all">Todos <Badge variant="secondary">{Object.entries(dataSelectors).reduce(
-                        (previousValue, currentValue) => {
-                            const value = currentValue[1];
-                            return previousValue + value.quantity;
-                        }, 0)}</Badge></TabsTrigger>
                     {
-                        Object.entries(dataSelectors).map(
+                        Object.entries(updatedDataSelectors).map(
                             ([key, value]) =>
-                                <TabsTrigger key={value.id} value={key}>
+                                <TabsTrigger id={`tab-${key}`} key={value.id} value={key}>
                                     {value.label} <Badge variant="secondary">{value.quantity}</Badge>
                                 </TabsTrigger>
                         )
@@ -252,7 +190,21 @@ export function DataTable({data}: Readonly<IDataTable>) {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56">
-                            {table
+                            {GetTable({
+                                data,
+                                currentRol: "Todos",
+                                columns,
+                                sorting,
+                                columnVisibility,
+                                rowSelection,
+                                columnFilters,
+                                pagination,
+                                setRowSelection,
+                                setSorting,
+                                setColumnFilters,
+                                setColumnVisibility,
+                                setPagination
+                            })
                                 .getAllColumns()
                                 .filter(
                                     (column) =>
@@ -277,27 +229,31 @@ export function DataTable({data}: Readonly<IDataTable>) {
                     </DropdownMenu>
                 </div>
             </div>
-            <TabsContent
-                value="outline"
-                className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-            >
-                <TableTabsContent data={data} table={table} columns={columns}/>
-            </TabsContent>
-            <TabsContent
-                value="past-performance"
-                className="flex flex-col px-4 lg:px-6"
-            >
-                <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-            </TabsContent>
-            <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
-                <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-            </TabsContent>
-            <TabsContent
-                value="focus-documents"
-                className="flex flex-col px-4 lg:px-6"
-            >
-                <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-            </TabsContent>
+            {
+                Object.entries(updatedDataSelectors).map(([key, value]) =>
+                    <TabsContent
+                        key={key}
+                        value={key}
+                        className={"relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"}
+                    >
+                        <TableTabsContent data={data} table={GetTable({
+                            data,
+                            currentRol: value.label,
+                            columns,
+                            sorting,
+                            columnVisibility,
+                            rowSelection,
+                            columnFilters,
+                            pagination,
+                            setRowSelection,
+                            setSorting,
+                            setColumnFilters,
+                            setColumnVisibility,
+                            setPagination
+                        })} columns={columns}/>
+                    </TabsContent>
+                )
+            }
         </Tabs>
     )
 }
