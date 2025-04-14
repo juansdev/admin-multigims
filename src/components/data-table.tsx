@@ -20,7 +20,7 @@ import {ColumnDef, ColumnFiltersState, SortingState, VisibilityState} from "@tan
 import {z} from "zod";
 import {DragHandle} from "@/components/ui/drag-handle";
 import {TableCellViewer} from "@/components/dataTable/components/table-cell-viewer";
-import {getRowStatusByStatus, updateDataSelectors} from "@/helpers/data-table.helper";
+import {getDataSelectors, getRowStatusByStatus, updateDataSelectors} from "@/helpers/data-table.helper";
 import {GetTable} from "@/hooks/data-table.hook";
 
 const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
@@ -89,39 +89,6 @@ const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
     },
 ];
 
-const getDataSelectors = ({data, roles}: Readonly<IDataTable>) => {
-    let dataSelectors: IDataSelectors[] = [];
-    for (const value of data) {
-        dataSelectors = value.roles.reduce((prev, rol) => {
-            const id = roles.find(originalRol => rol.name === originalRol.name)!.id;
-            const existId = !!(prev.find((valuePrev: IDataSelectors) => valuePrev.id === id)?.id);
-            const currentQuantity = prev.find((valuePrev: IDataSelectors) => valuePrev.label === rol.name)?.quantity;
-            let selector: IDataSelectors;
-            const label = roles.find(originalRol => rol.name === originalRol.name)!.name;
-            if ([id, label].every(val => val)) {
-                if (currentQuantity !== undefined)
-                    selector = {
-                        id,
-                        label,
-                        quantity: currentQuantity + 1
-                    };
-                else selector = {
-                    id,
-                    label,
-                    quantity: 1
-                };
-                if (!existId) prev.push(selector);
-                else prev = prev.map(value => {
-                    if (value.id === id) value = selector;
-                    return value;
-                });
-            }
-            return prev;
-        }, dataSelectors);
-    }
-    return dataSelectors;
-}
-
 export function DataTable({data, roles}: Readonly<IDataTable>) {
     const [rowSelection, setRowSelection] = React.useState({});
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -132,17 +99,18 @@ export function DataTable({data, roles}: Readonly<IDataTable>) {
         pageSize: 10,
     });
     const dataSelectors: IDataSelectors[] = getDataSelectors({data, roles});
-    const updatedDataSelectors = updateDataSelectors(dataSelectors);
+    const updatedDataSelectors = updateDataSelectors(dataSelectors, data);
+    const defaultValueTab: string = updatedDataSelectors[0].id.toString();
     return (
         <Tabs
-            defaultValue="all"
+            defaultValue={defaultValueTab}
             className="w-full flex-col justify-start gap-3"
         >
             <div className="flex flex-col items-start justify-start px-4 lg:px-6 gap-3">
                 <Label htmlFor="view-selector" className="sr-only">
                     View
                 </Label>
-                <Select defaultValue="outline">
+                <Select defaultValue={defaultValueTab}>
                     <SelectTrigger
                         className="flex w-fit @4xl/main:hidden"
                         size="sm"
@@ -152,10 +120,11 @@ export function DataTable({data, roles}: Readonly<IDataTable>) {
                     </SelectTrigger>
                     <SelectContent>
                         {
-                            Object.entries(updatedDataSelectors).map(
-                                ([key, value]) =>
-                                    <SelectItem key={value.id + "1"}
-                                                value={key}>{value.label}</SelectItem>
+                            updatedDataSelectors.map(value =>
+                                <SelectItem key={value.id + "_1"}
+                                            value={value.id.toString()}>
+                                    {value.label}
+                                </SelectItem>
                             )
                         }
                     </SelectContent>
@@ -163,9 +132,9 @@ export function DataTable({data, roles}: Readonly<IDataTable>) {
                 <TabsList
                     className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
                     {
-                        Object.entries(updatedDataSelectors).map(
-                            ([key, value]) =>
-                                <TabsTrigger id={`tab-${key}`} key={value.id + "2"} value={key}>
+                        updatedDataSelectors.map(value =>
+                            <TabsTrigger key={value.id + "_2"}
+                                         value={value.id.toString()}>
                                     {value.label} <Badge variant="secondary">{value.quantity}</Badge>
                                 </TabsTrigger>
                         )
@@ -222,10 +191,10 @@ export function DataTable({data, roles}: Readonly<IDataTable>) {
                 </div>
             </div>
             {
-                Object.entries(updatedDataSelectors).map(([key, value]) =>
+                updatedDataSelectors.map(value =>
                     <TabsContent
-                        key={key + "3"}
-                        value={key}
+                        key={value.id + "_3"}
+                        value={value.id.toString()}
                         className={"relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"}
                     >
                         <TableTabsContent data={data} table={GetTable({

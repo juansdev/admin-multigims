@@ -1,6 +1,6 @@
 import type {DragEndEvent, UniqueIdentifier} from "@dnd-kit/core";
 import {arrayMove} from "@dnd-kit/sortable";
-import {IDataSelectors, ISchemaDataTable} from "@/interfaces/components/data-table.interface";
+import {IDataSelectors, IDataTable, ISchemaDataTable} from "@/interfaces/components/data-table.interface";
 import React from "react";
 import {z} from "zod";
 import {IconCircle, IconCircleCheckFilled, IconGenderAgender, IconMoonFilled} from "@tabler/icons-react";
@@ -18,14 +18,11 @@ export const handleDragEnd = (event: DragEndEvent,
     }
 }
 
-export const updateDataSelectors = (dataSelectors: IDataSelectors[]) => {
-    dataSelectors = dataSelectors.map(data => {
-        if (data.label === "all") data.quantity = dataSelectors.reduce(
-            (previousValue, currentValue) => {
-                return previousValue + currentValue.quantity;
-            }, 0
-        );
-        return data;
+export const updateDataSelectors = (dataSelectors: IDataSelectors[], data: z.infer<typeof ISchemaDataTable>[]) => {
+    dataSelectors.push({
+        "id": 0,
+        "label": "Todos",
+        "quantity": data.length
     });
     return dataSelectors.sort((a, b) => a.id - b.id);
 }
@@ -49,7 +46,37 @@ export const getRowStatusByStatus = (status: string) => {
     return rowStatus;
 }
 
-export const getDataByKey = (data: z.infer<typeof ISchemaDataTable>[], currentRol: string): z.infer<typeof ISchemaDataTable>[] => {
-    data = data.filter(data => data.roles.filter(rol => rol.name === currentRol).length);
-    return data;
+export const getDataByKey = (data: z.infer<typeof ISchemaDataTable>[], currentRol: string): z.infer<typeof ISchemaDataTable>[] => data.filter(data => data.roles.filter(rol => rol.name === currentRol).length);
+
+export const getDataSelectors = ({data, roles}: Readonly<IDataTable>) => {
+    let dataSelectors: IDataSelectors[] = [];
+    for (const value of data) {
+        dataSelectors = value.roles.reduce((prev, rol) => {
+            const id = roles.find(originalRol => rol.name === originalRol.name)!.id;
+            const existId = !!(prev.find((valuePrev: IDataSelectors) => valuePrev.id === id)?.id);
+            const currentQuantity = prev.find((valuePrev: IDataSelectors) => valuePrev.label === rol.name)?.quantity;
+            let selector: IDataSelectors;
+            const label = roles.find(originalRol => rol.name === originalRol.name)!.name;
+            if ([id, label].every(val => val)) {
+                if (currentQuantity !== undefined)
+                    selector = {
+                        id,
+                        label,
+                        quantity: currentQuantity + 1
+                    };
+                else selector = {
+                    id,
+                    label,
+                    quantity: 1
+                };
+                if (!existId) prev.push(selector);
+                else prev = prev.map(value => {
+                    if (value.id === id) value = selector;
+                    return value;
+                });
+            }
+            return prev;
+        }, dataSelectors);
+    }
+    return dataSelectors;
 }
