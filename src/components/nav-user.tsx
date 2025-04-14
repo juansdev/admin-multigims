@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,} from "@/components/ui/sidebar"
 import {INavUser} from "@/interfaces/components/nav-user.interface";
+import Link from "next/link";
 
 export function NavUser({user}: Readonly<INavUser>) {
     const {isMobile} = useSidebar();
@@ -63,7 +64,7 @@ export function NavUser({user}: Readonly<INavUser>) {
                         <DropdownMenuGroup>
                             <DropdownMenuItem>
                                 <IconUserCircle/>
-                                Cuenta
+                                <Link href={"/dashboard/user"}>Cuenta</Link>
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
