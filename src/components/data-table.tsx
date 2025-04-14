@@ -3,10 +3,12 @@
 import * as React from "react";
 import {
     IconChevronDown,
+    IconCircle,
     IconCircleCheckFilled,
     IconDotsVertical,
+    IconGenderAgender,
     IconLayoutColumns,
-    IconLoader
+    IconMoonFilled
 } from "@tabler/icons-react";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
@@ -78,6 +80,25 @@ const dataSelectors = {
         "quantity": 2
     }
 };
+
+const getRowStatusByStatus = (status: string) => {
+    let rowStatus: React.JSX.Element;
+    switch (status) {
+        case "En línea":
+            rowStatus = <>{status} <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400"/></>;
+            break;
+        case "Ausente":
+            rowStatus = <>{status} <IconMoonFilled className="fill-yellow-600 dark:fill-yellow-500"/></>;
+            break;
+        case "No molestar":
+            rowStatus = <>{status} <IconGenderAgender className="fill-red-700 dark:fill-red-600"/></>;
+            break;
+        default:
+            rowStatus = <>{status} <IconCircle className="fill-neutral-500 dark:fill-neutral-400"/></>;
+            break;
+    }
+    return rowStatus;
+}
 const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
     {
         id: "drag",
@@ -97,9 +118,12 @@ const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
         header: "Rol",
         cell: ({row}) => (
             <div className="w-32">
-                <Badge variant="outline" className="text-muted-foreground px-1.5">
-                    {row.original.type}
-                </Badge>
+                <ol className={"list-disc"} dangerouslySetInnerHTML={{
+                    __html: row.original.roles.reduce((initial, current) => {
+                        return initial + "<li>" + current.name + "</li>";
+                    }, "")
+                }}>
+                </ol>
             </div>
         ),
     },
@@ -108,12 +132,7 @@ const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
         header: "Estado",
         cell: ({row}) => (
             <Badge variant="outline" className="text-muted-foreground px-1.5">
-                {row.original.status === "Done" ? (
-                    <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400"/>
-                ) : (
-                    <IconLoader/>
-                )}
-                {row.original.status}
+                {getRowStatusByStatus(row.original.status)}
             </Badge>
         ),
     },

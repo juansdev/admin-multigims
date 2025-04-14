@@ -1,13 +1,19 @@
 import {z} from "zod";
 
+const ISchemaRolesDataTable = z.object({
+    name: z.string(),
+    color: z.string()
+});
 export const ISchemaDataTable = z.object({
     id: z.number(),
-    header: z.string(),
-    type: z.string(),
+    username: z.string(),
+    handle: z.string(),
     status: z.string(),
-    target: z.string(),
-    limit: z.string(),
-    reviewer: z.string(),
+    aboutMe: z.string(),
+    memberDate: z.string(),
+    roles: z.array(ISchemaRolesDataTable),
+    avatarUrl: z.string(),
+    bannerUrl: z.string()
 });
 
 export interface IDataTable {

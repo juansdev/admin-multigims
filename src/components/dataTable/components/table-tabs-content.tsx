@@ -11,7 +11,7 @@ import {
 import {restrictToVerticalAxis} from "@dnd-kit/modifiers";
 import {handleDragEnd} from "@/helpers/data-table.helper";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {flexRender, Row} from "@tanstack/react-table";
+import {flexRender} from "@tanstack/react-table";
 import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {DraggableRow} from "@/components/dataTable/components/draggable-row";
 import {Label} from "@/components/ui/label";
@@ -19,7 +19,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Button} from "@/components/ui/button";
 import {IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight} from "@tabler/icons-react";
 import * as React from "react";
-import {ITableTabsContent} from "@/interfaces/components/table-tabs-content.interface";
+import {IRowTabsContent, ITableTabsContent} from "@/interfaces/components/table-tabs-content.interface";
 
 export function TableTabsContent({data: initialData, table, columns}: Readonly<ITableTabsContent>) {
     const [data, setData] = React.useState(() => initialData);
@@ -67,15 +67,7 @@ export function TableTabsContent({data: initialData, table, columns}: Readonly<I
                                 items={dataIds}
                                 strategy={verticalListSortingStrategy}
                             >
-                                {table.getRowModel().rows.map((row: Row<{
-                                    id: number;
-                                    header: string;
-                                    type: string;
-                                    status: string;
-                                    target: string;
-                                    limit: string;
-                                    reviewer: string;
-                                }>) => (
+                                {table.getRowModel().rows.map((row: IRowTabsContent) => (
                                     <DraggableRow key={row.id} row={row}/>
                                 ))}
                             </SortableContext>
