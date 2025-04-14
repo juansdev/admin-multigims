@@ -18,21 +18,16 @@ export const handleDragEnd = (event: DragEndEvent,
     }
 }
 
-export const updateDataSelectors = (dataSelectors: IDataSelectors) => {
-    dataSelectors["all"]["quantity"] = Object.entries(dataSelectors).reduce(
-        (previousValue, currentValue) => {
-            const value = currentValue[1];
-            return previousValue + value.quantity;
-        }, 0
-    );
-
-    dataSelectors = Object.fromEntries(Object.entries(dataSelectors).sort(function (obj1, obj2) {
-        const value1 = obj1[1];
-        const value2 = obj2[1];
-        return value1.id - value2.id
-    }));
-
-    return dataSelectors;
+export const updateDataSelectors = (dataSelectors: IDataSelectors[]) => {
+    dataSelectors = dataSelectors.map(data => {
+        if (data.label === "all") data.quantity = dataSelectors.reduce(
+            (previousValue, currentValue) => {
+                return previousValue + currentValue.quantity;
+            }, 0
+        );
+        return data;
+    });
+    return dataSelectors.sort((a, b) => a.id - b.id);
 }
 
 export const getRowStatusByStatus = (status: string) => {

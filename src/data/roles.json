@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Creadores Roblox",
+    "color": "#faa61a"
+  },
+  {
+    "id": 2,
+    "name": "Diseñadores",
+    "color": "#5865f2"
+  },
+  {
+    "id": 3,
+    "name": "Editores",
+    "color": "#faa61a"
+  },
+  {
+    "id": 4,
+    "name": "Programadores",
+    "color": "#7E69AB"
+  },
+  {
+    "id": 5,
+    "name": "Moderadores",
+    "color": "#5865f2"
+  },
+  {
+    "id": 6,
+    "name": "Creadores Minecraft",
+    "color": "#3ba55c"
+  },
+  {
+    "id": 7,
+    "name": "Marketing",
+    "color": "#3ba45c"
+  }
+]

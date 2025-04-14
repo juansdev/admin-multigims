@@ -17,17 +17,21 @@ export const ISchemaDataTable = z.object({
     avatarUrl: z.string(),
     bannerUrl: z.string()
 });
+export const ISchemaRolesTable = z.object({
+    id: z.number(),
+    name: z.string(),
+    color: z.string()
+});
 
 export interface IDataTable {
     data: z.infer<typeof ISchemaDataTable>[];
+    roles: z.infer<typeof ISchemaRolesTable>[];
 }
 
 export interface IDataSelectors {
-    [key: string]: {
-        "id": number;
-        "label": string;
-        "quantity": number;
-    }
+    "id": number;
+    "label": string;
+    "quantity": number;
 }
 
 export interface IGetTable {
