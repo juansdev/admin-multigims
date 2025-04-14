@@ -17,7 +17,6 @@ import {
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {Label} from "@/components/ui/label";
@@ -99,6 +98,7 @@ const getRowStatusByStatus = (status: string) => {
     }
     return rowStatus;
 }
+
 const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
     {
         id: "drag",
@@ -138,7 +138,7 @@ const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
     },
     {
         id: "acciones",
-        cell: () => (
+        cell: ({row}) => (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
@@ -151,11 +151,14 @@ const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-32">
-                    <DropdownMenuItem>Editar</DropdownMenuItem>
-                    <DropdownMenuItem>Copiar Nombre</DropdownMenuItem>
-                    <DropdownMenuItem>Favorito</DropdownMenuItem>
-                    <DropdownMenuSeparator/>
-                    <DropdownMenuItem variant="destructive">Eliminar</DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <button onClick={
+                            async function () {
+                                await navigator.clipboard?.writeText(row.original.username);
+                            }
+                        }>Copiar Nombre
+                        </button>
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         ),

@@ -44,20 +44,20 @@ export function TableCellViewer({item}: Readonly<{ item: z.infer<typeof ISchemaD
                 </Button>
             </DrawerTrigger>
             <DrawerContent>
-                <DrawerHeader className="gap-1 hidden">
-                    <DrawerTitle>{item.username}</DrawerTitle>
-                    <DrawerDescription>
-                        Showing total visitors for the last 6 months
-                    </DrawerDescription>
-                </DrawerHeader>
-                <div className="min-h-screen flex items-start justify-center bg-discord-darker-blue">
+                <div className="min-h-screen flex flex-col items-start justify-center bg-discord-darker-blue">
+                    <DrawerHeader className="gap-1 hidden">
+                        <DrawerTitle>{item.username}</DrawerTitle>
+                        <DrawerDescription>
+                            Showing total visitors for the last 6 months
+                        </DrawerDescription>
+                    </DrawerHeader>
                     <DiscordProfile {...profileData} />
+                    <DrawerFooter className={"w-full"}>
+                        <DrawerClose asChild>
+                            <Button variant="outline">Salir</Button>
+                        </DrawerClose>
+                    </DrawerFooter>
                 </div>
-                <DrawerFooter>
-                    <DrawerClose asChild>
-                        <Button variant="outline">Salir</Button>
-                    </DrawerClose>
-                </DrawerFooter>
             </DrawerContent>
         </Drawer>
     );
