@@ -9,36 +9,21 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import React from "react";
+import {recoveryPasswordSecurityFormSchema} from "@/helpers/recovery-password.helper";
 
 export function RecoveryPasswordForm({
                                          className,
                                          ...props
                                      }: Readonly<React.ComponentPropsWithoutRef<"div">>) {
-    const formSchema = z.object({
-        password: z
-            .string()
-            .min(1, {message: "Este campo debe ser diligenciado."}),
-        confirmPassword: z
-            .string()
-            .min(1, {message: "Este campo debe ser diligenciado."})
-    }).superRefine(({confirmPassword, password}, ctx) => {
-        if (confirmPassword !== password) {
-            ctx.addIssue({
-                code: "custom",
-                message: "La contraseña no coincide",
-                path: ['confirmPassword']
-            });
-        }
-    });
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof recoveryPasswordSecurityFormSchema>>({
+        resolver: zodResolver(recoveryPasswordSecurityFormSchema),
         defaultValues: {
             password: "",
             confirmPassword: ""
         }
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: z.infer<typeof recoveryPasswordSecurityFormSchema>) {
         console.log(values);
     }
 

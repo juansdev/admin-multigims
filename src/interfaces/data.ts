@@ -24,6 +24,5 @@ export interface IUser {
     phone: string;
     website: string;
     joined: string;
-    lastActive: string;
     bio: string;
 }

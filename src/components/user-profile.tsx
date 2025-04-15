@@ -3,10 +3,10 @@
 import {AtSign, Calendar, Edit, Globe, MapPin, Phone, User, UserCog,} from "lucide-react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Tabs, TabsContent} from "@/components/ui/tabs";
 import userData from "@/data/user.json";
+import Link from "next/link";
 
 export function UserProfile() {
     return (
@@ -27,7 +27,7 @@ export function UserProfile() {
                             <div className="flex items-center gap-2">
                                 <CardTitle className="text-2xl">{userData.name}</CardTitle>
                                 <Badge variant="outline" className="ml-2">
-                                    {userData.title}
+                                    {userData.job_title}
                                 </Badge>
                             </div>
                             <CardDescription className="flex items-center gap-1">
@@ -39,10 +39,11 @@ export function UserProfile() {
                                 {userData.location}
                             </CardDescription>
                         </div>
-                        <Button size="sm" className="mt-4 md:mt-0">
+                        <Link href={"/dashboard/user/edit"}
+                              className="bg-white p-2 dark:bg-black dark:text-white text-black flex flex-row gap-1 mt-4 md:mt-0 justify-center items-center rounded-md">
                             <Edit className="mr-2 h-4 w-4"/>
                             Editar Perfil
-                        </Button>
+                        </Link>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
@@ -110,7 +111,7 @@ export function UserProfile() {
                                     <UserCog className="h-4 w-4 text-muted-foreground"/>
                                     <div className="space-y-0.5">
                                         <p className="text-sm font-medium">Cargo</p>
-                                        <p className="text-sm text-muted-foreground">{userData.title}</p>
+                                        <p className="text-sm text-muted-foreground">{userData.job_title}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">

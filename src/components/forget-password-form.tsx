@@ -7,34 +7,29 @@ import React from "react";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {forgetPasswordSecurityFormSchema} from "@/helpers/forget-password.helper";
 
 export function ForgetPasswordForm({
                                        className,
                                        ...props
                                    }: Readonly<React.ComponentPropsWithoutRef<"div">>) {
-    const formSchema = z.object({
-        email: z
-            .string()
-            .min(1, {message: "Este campo debe ser diligenciado."})
-            .email("Esto no es un correo valido."),
-    });
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof forgetPasswordSecurityFormSchema>>({
+        resolver: zodResolver(forgetPasswordSecurityFormSchema),
         defaultValues: {
-            email: "",
+            email: ""
         }
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: z.infer<typeof forgetPasswordSecurityFormSchema>) {
         console.log(values);
     }
 
     return <div className={cn("flex flex-col gap-6", className)} {...props}>
         <Card>
             <CardHeader>
-                <CardTitle className="text-2xl">Reestablecer contraseña</CardTitle>
+                <CardTitle className="text-2xl">Restablecer contraseña</CardTitle>
                 <CardDescription>
-                    Ingrese tu correo electrónico debajo para reestablecer
+                    Ingrese tu correo electrónico debajo para restablecer
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -51,8 +46,7 @@ export function ForgetPasswordForm({
                                     </FormControl>
                                     <FormDescription>
                                         Se enviara un enlace a su correo electrónico donde podrás
-                                        reestablecer su
-                                        contraseña.
+                                        restablecer su contraseña.
                                     </FormDescription>
                                     <FormMessage/>
                                 </FormItem>

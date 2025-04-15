@@ -10,29 +10,21 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import React from "react";
+import {loginSecurityFormSchema} from "@/helpers/login.helper";
 
 export function LoginForm({
                               className,
                               ...props
                           }: Readonly<React.ComponentPropsWithoutRef<"div">>) {
-    const formSchema = z.object({
-        email: z
-            .string()
-            .min(1, {message: "Este campo debe ser diligenciado."})
-            .email("Esto no es un correo valido."),
-        password: z
-            .string()
-            .min(1, {message: "Este campo debe ser diligenciado."})
-    });
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof loginSecurityFormSchema>>({
+        resolver: zodResolver(loginSecurityFormSchema),
         defaultValues: {
             email: "",
             password: ""
-        }
+        },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: z.infer<typeof loginSecurityFormSchema>) {
         console.log(values);
     }
 
