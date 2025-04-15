@@ -174,8 +174,7 @@ export function LoadingTable() {
 
 export function LoadingSidebar() {
     return (
-        <div suppressHydrationWarning
-             className="w-1/5 overflow-hidden flex flex-row flex-wrap justify-center items-center animate-pulse">
+        <div className="w-1/5 overflow-hidden flex flex-row flex-wrap justify-center items-center animate-pulse">
             {Array.from({length: 10}).map((_, index) => index + 1)
                 .map((value) => (
                     <div key={value} className="h-4 w-100 rounded bg-muted"></div>
