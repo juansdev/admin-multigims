@@ -311,7 +311,7 @@ export function UserEditForm() {
                                 </CardContent>
                                 <CardFooter className="mt-3 flex justify-between">
                                     <Button variant="outline" type="button" onClick={() => profileForm.reset()}>
-                                        Cancelar
+                                        Revertir Cambios
                                     </Button>
                                     <Button type="submit" disabled={isSaving}>
                                         {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
@@ -399,7 +399,7 @@ export function UserEditForm() {
                                 </CardContent>
                                 <CardFooter className="mt-3 flex justify-between">
                                     <Button variant="outline" type="button" onClick={() => securityForm.reset()}>
-                                        Cancelar
+                                        Revertir Cambios
                                     </Button>
                                     <Button type="submit" disabled={isSaving}>
                                         {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}

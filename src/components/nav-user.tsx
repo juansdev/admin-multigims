@@ -62,10 +62,12 @@ export function NavUser({user}: Readonly<INavUser>) {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <IconUserCircle/>
-                                <Link href={"/dashboard/user"}>Cuenta</Link>
-                            </DropdownMenuItem>
+                            <Link href={"/dashboard/user"}>
+                                <DropdownMenuItem>
+                                    <IconUserCircle/>
+                                    Cuenta
+                                </DropdownMenuItem>
+                            </Link>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem>
