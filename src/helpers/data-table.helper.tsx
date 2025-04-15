@@ -5,6 +5,7 @@ import {z} from "zod";
 import {IconCircle, IconCircleCheckFilled, IconGenderAgender, IconMoonFilled} from "@tabler/icons-react";
 import {IDiscordUsers} from "@/interfaces/api/discord-users.interface";
 import {IDataSelectorsDto, IDataTableDto, ISchemaDataTableDto, ISchemaRolesTableDto} from "@/dto/discord-users.dto";
+import {convertDateToString} from "@/helpers/common.helper";
 
 export const handleDragEnd = (event: DragEndEvent,
                               dataIds: UniqueIdentifier[],
@@ -87,10 +88,10 @@ export const discordUsersToDataTableDto = (data: IDiscordUsers[]): IDataTableDto
     const dataDto: z.infer<typeof ISchemaDataTableDto>[] = data.map((user: IDiscordUsers) => ({
         id: user._id,
         username: user.nickname ? user.nickname : user.username,
-        handle: `@${user.username}#${user.discriminator}`,
+        handle: user.username,
         status: "En línea",
         aboutMe: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris.",
-        memberDate: user.joinedAt.toString(),
+        memberDate: convertDateToString(new Date(user.joinedAt)),
         roles: user.roles.map((role) => {
             const existRole = roleDto.find(
                 roleDto =>

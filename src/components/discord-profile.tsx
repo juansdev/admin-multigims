@@ -1,18 +1,19 @@
 import React from 'react';
 import RoleTag from './role-tag';
-import {IDiscordProfileProps} from "@/interfaces/components/discord-profile.interface";
 import Image from "next/image";
+import {z} from "zod";
+import {ISchemaDataTableDto} from "@/dto/discord-users.dto";
 
-const DiscordProfile: React.FC<IDiscordProfileProps> = ({
-                                                            username,
-                                                            handle,
-                                                            status,
-                                                            aboutMe,
-                                                            memberDate,
-                                                            roles,
-                                                            avatarUrl,
-                                                            bannerUrl
-                                                        }) => {
+export function DiscordProfile({
+                                   username,
+                                   handle,
+                                   status,
+                                   aboutMe,
+                                   memberDate,
+                                   roles,
+                                   avatarUrl,
+                                   bannerUrl
+                               }: Readonly<z.infer<typeof ISchemaDataTableDto>>) {
     return (
         <div className="w-full max-w-md mx-auto rounded-lg bg-discord-dark-blue">
             {/* Banner and Avatar */}
@@ -41,9 +42,7 @@ const DiscordProfile: React.FC<IDiscordProfileProps> = ({
 
                     <div className="mt-3 border-t border-gray-700 pt-3">
                         <h3 className="text-white font-bold text-sm uppercase">SOBRE MÍ</h3>
-                        {aboutMe.map((line, i) => (
-                            <p key={i} className="text-discord-text-secondary text-sm mt-1">{line}</p>
-                        ))}
+                        <p className="text-discord-text-secondary text-sm mt-1">{aboutMe}</p>
                     </div>
 
                     <div className="mt-3 border-t border-gray-700 pt-3">
@@ -54,8 +53,8 @@ const DiscordProfile: React.FC<IDiscordProfileProps> = ({
                     <div className="mt-3 border-t border-gray-700 pt-3">
                         <h3 className="text-white font-bold text-sm uppercase mb-2">ROLES</h3>
                         <div className="flex flex-wrap gap-2">
-                            {roles.map((role, i) => (
-                                <RoleTag key={i} label={role.name} color={role.color}/>
+                            {roles.map((role) => (
+                                <RoleTag key={role.id} label={role.name} color={role.color}/>
                             ))}
                         </div>
                     </div>
@@ -63,6 +62,6 @@ const DiscordProfile: React.FC<IDiscordProfileProps> = ({
             </div>
         </div>
     );
-};
+}
 
 export default DiscordProfile;
