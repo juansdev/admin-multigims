@@ -2,41 +2,38 @@ import {z} from "zod";
 import {ColumnDef, ColumnFiltersState, RowSelectionState, SortingState, VisibilityState} from "@tanstack/react-table";
 import React from "react";
 
-const ISchemaRolesDataTable = z.object({
+export const ISchemaRolesTableDto = z.object({
+    id: z.number(),
     name: z.string(),
     color: z.string()
 });
-export const ISchemaDataTable = z.object({
-    id: z.number(),
+
+export const ISchemaDataTableDto = z.object({
+    id: z.string(),
     username: z.string(),
     handle: z.string(),
     status: z.string(),
     aboutMe: z.string(),
     memberDate: z.string(),
-    roles: z.array(ISchemaRolesDataTable),
+    roles: z.array(ISchemaRolesTableDto),
     avatarUrl: z.string(),
     bannerUrl: z.string()
 });
-export const ISchemaRolesTable = z.object({
-    id: z.number(),
-    name: z.string(),
-    color: z.string()
-});
 
-export interface IDataTable {
-    data: z.infer<typeof ISchemaDataTable>[];
-    roles: z.infer<typeof ISchemaRolesTable>[];
+export interface IDataTableDto {
+    data: z.infer<typeof ISchemaDataTableDto>[];
+    roles: z.infer<typeof ISchemaRolesTableDto>[];
 }
 
-export interface IDataSelectors {
+export interface IDataSelectorsDto {
     "id": number;
     "label": string;
     "quantity": number;
 }
 
-export interface IGetTable {
-    data: z.infer<typeof ISchemaDataTable>[];
-    columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[];
+export interface IGetTableDto {
+    data: z.infer<typeof ISchemaDataTableDto>[];
+    columns: ColumnDef<z.infer<typeof ISchemaDataTableDto>>[];
     currentRol: string;
     rowSelection: RowSelectionState;
     setRowSelection: React.Dispatch<React.SetStateAction<RowSelectionState>>;

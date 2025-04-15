@@ -21,7 +21,7 @@ import {IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight} 
 import * as React from "react";
 import {IRowTabsContent, ITableTabsContent} from "@/interfaces/components/table-tabs-content.interface";
 
-export function TableTabsContent({data: initialData, table, columns}: Readonly<ITableTabsContent>) {
+export function TableTabsContent({data: initialData, table, columns, currentRole}: Readonly<ITableTabsContent>) {
     const [data, setData] = React.useState(() => initialData);
     const sortableId = React.useId();
     const sensors = useSensors(
@@ -67,7 +67,11 @@ export function TableTabsContent({data: initialData, table, columns}: Readonly<I
                                 items={dataIds}
                                 strategy={verticalListSortingStrategy}
                             >
-                                {table.getRowModel().rows.map((row: IRowTabsContent) => (
+                                {table.getRowModel().rows.filter(
+                                    row => (row.original.roles.filter(
+                                        role => role.name === currentRole
+                                    ).length || currentRole === "Todos")
+                                ).map((row: IRowTabsContent) => (
                                     <DraggableRow key={row.id} row={row}/>
                                 ))}
                             </SortableContext>

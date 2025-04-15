@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {ISchemaDataTable} from "@/interfaces/components/data-table.interface";
+import {ISchemaDataTableDto} from "@/dto/discord-users.dto";
 import {Button} from "@/components/ui/button";
 import * as React from "react";
 import {
@@ -16,7 +16,7 @@ import {useIsMobile} from "@/hooks/use-mobile.hook";
 import DiscordProfile from "@/components/discord-profile";
 import {IDiscordProfileProps} from "@/interfaces/components/discord-profile.interface";
 
-export function TableCellViewer({item}: Readonly<{ item: z.infer<typeof ISchemaDataTable> }>) {
+export function TableCellViewer({item}: Readonly<{ item: z.infer<typeof ISchemaDataTableDto> }>) {
     const isMobile = useIsMobile();
     const profileData: IDiscordProfileProps = {
         username: "DragønX",

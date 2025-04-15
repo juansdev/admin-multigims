@@ -14,7 +14,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {IData} from "@/interfaces/data";
+import {IData} from "@/interfaces/data.interface";
 import {ModeToggle} from "@/components/mode-toggle";
 import Link from "next/link";
 import userData from "@/data/user.json";

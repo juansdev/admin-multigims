@@ -14,20 +14,25 @@ import {
 import {Label} from "@/components/ui/label";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import {Tabs, TabsContent, TabsList, TabsTrigger,} from "@/components/ui/tabs";
-import {IDataSelectors, IDataTable, ISchemaDataTable} from "@/interfaces/components/data-table.interface";
-import {TableTabsContent} from "@/components/dataTable/components/table-tabs-content";
+import {IDataSelectorsDto, IDataTableDto, ISchemaDataTableDto} from "@/dto/discord-users.dto";
 import {ColumnDef, ColumnFiltersState, SortingState, VisibilityState} from "@tanstack/react-table";
 import {z} from "zod";
 import {DragHandle} from "@/components/ui/drag-handle";
 import {TableCellViewer} from "@/components/dataTable/components/table-cell-viewer";
-import {getDataSelectors, getRowStatusByStatus, updateDataSelectors} from "@/helpers/data-table.helper";
-import {GetTable} from "@/hooks/data-table.hook";
+import {
+    discordUsersToDataTableDto,
+    getDataSelectors,
+    getRowStatusByStatus,
+    updateDataSelectors
+} from "@/helpers/data-table.helper";
+import {TableTabsContent} from "./dataTable/components/table-tabs-content";
+import {useTableForRole} from "@/hooks/data-table.hook";
 
-const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
+const columns: ColumnDef<z.infer<typeof ISchemaDataTableDto>>[] = [
     {
         id: "drag",
         header: () => null,
-        cell: ({row}) => <DragHandle id={row.original.id}/>,
+        cell: ({row}) => <DragHandle id={row.index}/>,
     },
     {
         accessorKey: "name",
@@ -89,7 +94,7 @@ const columns: ColumnDef<z.infer<typeof ISchemaDataTable>>[] = [
     },
 ];
 
-export function DataTable({data, roles}: Readonly<IDataTable>) {
+export function DataTable() {
     const [rowSelection, setRowSelection] = React.useState({});
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -98,47 +103,71 @@ export function DataTable({data, roles}: Readonly<IDataTable>) {
         pageIndex: 0,
         pageSize: 10,
     });
-    const dataSelectors: IDataSelectors[] = getDataSelectors({data, roles});
-    const updatedDataSelectors = updateDataSelectors(dataSelectors, data);
-    const defaultValueTab: string = updatedDataSelectors[0].id.toString();
+    const [data, setData] = React.useState<IDataTableDto>({data: [], roles: []});
+    const [dataSelectors, setDataSelectors] = React.useState<IDataSelectorsDto[]>([]);
+    const [defaultValueTab, setDefaultValueTab] = React.useState<string>();
+    const [isMounted, setIsMounted] = React.useState(false);
+    const table = useTableForRole({
+        data: data.data,
+        currentRol: "Todos",
+        columns,
+        sorting,
+        columnVisibility,
+        rowSelection,
+        columnFilters,
+        pagination,
+        setRowSelection,
+        setSorting,
+        setColumnFilters,
+        setColumnVisibility,
+        setPagination
+    });
+    React.useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await fetch('/api/discord/users');
+                if (!res.ok) {
+                    console.error('Network response was not ok');
+                }
+                const response = await res.json();
+                const data: IDataTableDto = discordUsersToDataTableDto(response);
+                setData(data);
+                const selectors = updateDataSelectors(getDataSelectors(data), data.data);
+                setDefaultValueTab(selectors[0]?.id.toString());
+                setDataSelectors(selectors);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData().then(() => {
+            setIsMounted(true);
+        });
+    }, []);
     return (
-        <Tabs
-            defaultValue={defaultValueTab}
-            className="w-full flex-col justify-start gap-3"
-        >
+        isMounted ? <Tabs defaultValue={defaultValueTab} className="w-full flex-col justify-start gap-3">
             <div className="flex flex-col items-start justify-start px-4 lg:px-6 gap-3">
                 <Label htmlFor="view-selector" className="sr-only">
                     View
                 </Label>
                 <Select defaultValue={defaultValueTab}>
-                    <SelectTrigger
-                        className="flex w-fit @4xl/main:hidden"
-                        size="sm"
-                        id="view-selector"
-                    >
+                    <SelectTrigger className="flex w-fit @4xl/main:hidden" size="sm" id="view-selector">
                         <SelectValue placeholder="Select a view"/>
                     </SelectTrigger>
                     <SelectContent>
-                        {
-                            updatedDataSelectors.map(value =>
-                                <SelectItem key={value.id + "_1"}
-                                            value={value.id.toString()}>
-                                    {value.label}
-                                </SelectItem>
-                            )
-                        }
+                        {dataSelectors.map((value) => (
+                            <SelectItem key={value.id + "_1"} value={value.id.toString()}>
+                                {value.label}
+                            </SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
                 <TabsList
                     className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-                    {
-                        updatedDataSelectors.map(value =>
-                            <TabsTrigger key={value.id + "_2"}
-                                         value={value.id.toString()}>
-                                    {value.label} <Badge variant="secondary">{value.quantity}</Badge>
-                                </TabsTrigger>
-                        )
-                    }
+                    {dataSelectors.map((value) => (
+                        <TabsTrigger key={value.id + "_2"} value={value.id.toString()}>
+                            {value.label} <Badge variant="secondary">{value.quantity}</Badge>
+                        </TabsTrigger>
+                    ))}
                 </TabsList>
                 <div className="flex items-center gap-2">
                     <DropdownMenu>
@@ -151,26 +180,12 @@ export function DataTable({data, roles}: Readonly<IDataTable>) {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56">
-                            {GetTable({
-                                data,
-                                currentRol: "Todos",
-                                columns,
-                                sorting,
-                                columnVisibility,
-                                rowSelection,
-                                columnFilters,
-                                pagination,
-                                setRowSelection,
-                                setSorting,
-                                setColumnFilters,
-                                setColumnVisibility,
-                                setPagination
-                            })
+                            {
+                                table
                                 .getAllColumns()
                                 .filter(
                                     (column) =>
-                                        typeof column.accessorFn !== "undefined" &&
-                                        column.getCanHide()
+                                        typeof column.accessorFn !== "undefined" && column.getCanHide()
                                 )
                                 .map((column) => {
                                     return (
@@ -178,43 +193,25 @@ export function DataTable({data, roles}: Readonly<IDataTable>) {
                                             key={column.id}
                                             className="capitalize"
                                             checked={column.getIsVisible()}
-                                            onCheckedChange={(value) =>
-                                                column.toggleVisibility(value)
-                                            }
+                                            onCheckedChange={(value) => column.toggleVisibility(value)}
                                         >
                                             {column.id}
                                         </DropdownMenuCheckboxItem>
-                                    )
+                                    );
                                 })}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
             </div>
-            {
-                updatedDataSelectors.map(value =>
-                    <TabsContent
-                        key={value.id + "_3"}
-                        value={value.id.toString()}
-                        className={"relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"}
-                    >
-                        <TableTabsContent data={data} table={GetTable({
-                            data,
-                            currentRol: value.label,
-                            columns,
-                            sorting,
-                            columnVisibility,
-                            rowSelection,
-                            columnFilters,
-                            pagination,
-                            setRowSelection,
-                            setSorting,
-                            setColumnFilters,
-                            setColumnVisibility,
-                            setPagination
-                        })} columns={columns}/>
-                    </TabsContent>
-                )
-            }
-        </Tabs>
-    )
+            {dataSelectors.map(value => (
+                <TabsContent
+                    key={value.id + "_3"}
+                    value={value.id.toString()}
+                    className={"relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"}
+                >
+                    <TableTabsContent currentRole={value.label} data={data.data} table={table} columns={columns}/>
+                </TabsContent>
+            ))}
+        </Tabs> : ""
+    );
 }

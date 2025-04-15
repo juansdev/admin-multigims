@@ -8,9 +8,9 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import {getDataByKey} from "@/helpers/data-table.helper";
-import {IGetTable} from "@/interfaces/components/data-table.interface";
+import {IGetTableDto} from "@/dto/discord-users.dto";
 
-export function GetTable({
+export function useTableForRole({
                              data,
                              currentRol,
                              columns,
@@ -24,7 +24,7 @@ export function GetTable({
                              setColumnFilters,
                              setColumnVisibility,
                              setPagination
-                         }: IGetTable) {
+                                }: IGetTableDto) {
     const dataUpdated = getDataByKey(data, currentRol);
     return useReactTable({
         data: dataUpdated.length ? dataUpdated : data,

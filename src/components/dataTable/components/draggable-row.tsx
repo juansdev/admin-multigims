@@ -4,9 +4,9 @@ import {useSortable} from "@dnd-kit/sortable";
 import {TableCell, TableRow} from "@/components/ui/table";
 import {CSS} from "@dnd-kit/utilities";
 import * as React from "react";
-import {ISchemaDataTable} from "@/interfaces/components/data-table.interface";
+import {ISchemaDataTableDto} from "@/dto/discord-users.dto";
 
-export function DraggableRow({row}: { row: Row<z.infer<typeof ISchemaDataTable>> }) {
+export function DraggableRow({row}: Readonly<{ row: Row<z.infer<typeof ISchemaDataTableDto>> }>) {
     const {transform, transition, setNodeRef, isDragging} = useSortable({
         id: row.original.id,
     })
