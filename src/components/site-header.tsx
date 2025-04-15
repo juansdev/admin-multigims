@@ -1,7 +1,14 @@
+"use client"
+
 import {Separator} from "@/components/ui/separator";
 import {SidebarTrigger} from "@/components/ui/sidebar";
+import React, {useEffect} from "react";
 
 export function SiteHeader() {
+    const [title, setTitle] = React.useState<string>("");
+    useEffect(() => {
+        setTitle(document.getElementsByTagName("title")[0].innerHTML.split("—")[0].trim());
+    }, []);
     return (
         <header
             className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -11,7 +18,7 @@ export function SiteHeader() {
                     orientation="vertical"
                     className="mx-2 data-[orientation=vertical]:h-4"
                 />
-                <h1 className="text-base font-medium">Miembros</h1>
+                <h1 className="text-base font-medium">{title}</h1>
             </div>
         </header>
     )

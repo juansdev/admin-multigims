@@ -369,7 +369,7 @@ export function UserEditForm() {
                                                 </FormControl>
                                                 <FormDescription>
                                                     La contraseña debe de tener al menos 8 caracteres y incluir
-                                                    mayuscula, minuscula, y numeros.
+                                                    mayúscula, minúscula, y numeros.
                                                 </FormDescription>
                                                 <FormMessage/>
                                             </FormItem>

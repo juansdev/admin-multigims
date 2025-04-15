@@ -18,7 +18,7 @@ export interface IUser {
     name: string;
     email: string;
     avatar: string;
-    title: string;
+    job_title: string;
     department: string;
     location: string;
     phone: string;

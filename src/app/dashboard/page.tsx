@@ -2,6 +2,10 @@ import {DataTable} from "@/components/data-table";
 import data from "@/data/members.json";
 import roles from "@/data/roles.json";
 
+export const metadata = {
+    title: 'Dashboard'
+}
+
 export default function Page() {
     return (
         <div className="@container/main flex flex-1 flex-col gap-2">

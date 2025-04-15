@@ -24,7 +24,7 @@ const data: IData = {
     navMain: [
         {
             title: "Miembros",
-            url: "#",
+            url: "/dashboard",
             icon: IconUsers,
         }
     ],

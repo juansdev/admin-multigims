@@ -17,8 +17,8 @@ export const securityFormSchema = z
         newPassword: z
             .string()
             .min(8, {message: "La contraseña debe de tener al menos 8 caracteres."})
-            .regex(/[A-Z]/, {message: "La contraseña debe de tener al menos 1 letra mayuscula."})
-            .regex(/[a-z]/, {message: "La contraseña debe de tener al menos 1 letra minuscula."})
+            .regex(/[A-Z]/, {message: "La contraseña debe de tener al menos 1 letra mayúscula."})
+            .regex(/[a-z]/, {message: "La contraseña debe de tener al menos 1 letra minúscula."})
             .regex(/\d/, {message: "La contraseña debe de tener al menos 1 número."}),
         confirmPassword: z.string().min(1, {message: "Por favor confirmar su contraseña."})
     })
