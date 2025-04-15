@@ -27,6 +27,7 @@ import {
 } from "@/helpers/data-table.helper";
 import {TableTabsContent} from "./dataTable/components/table-tabs-content";
 import {useTableForRole} from "@/hooks/data-table.hook";
+import {LoadingTable} from "@/components/ui/loading";
 
 const columns: ColumnDef<z.infer<typeof ISchemaDataTableDto>>[] = [
     {
@@ -212,6 +213,10 @@ export function DataTable() {
                     <TableTabsContent currentRole={value.label} data={data.data} table={table} columns={columns}/>
                 </TabsContent>
             ))}
-        </Tabs> : ""
+        </Tabs> : <div className={"w-full flex-col justify-start gap-3"}>
+            <div className="flex flex-col items-start justify-start px-4 lg:px-6 gap-3">
+                <LoadingTable/>
+            </div>
+        </div>
     );
 }
