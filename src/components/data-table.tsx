@@ -163,7 +163,7 @@ export function DataTable() {
                     </SelectContent>
                 </Select>
                 <TabsList
-                    className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
+                    className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex @4xl/main:flex-wrap">
                     {dataSelectors.map((value) => (
                         <TabsTrigger key={value.id + "_2"} value={value.id.toString()}>
                             {value.label} <Badge variant="secondary">{value.quantity}</Badge>
