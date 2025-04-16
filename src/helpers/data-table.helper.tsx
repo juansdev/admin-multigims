@@ -6,6 +6,7 @@ import {IconCircle, IconCircleCheckFilled, IconGenderAgender, IconMoonFilled} fr
 import {IDiscordUsers} from "@/interfaces/api/discord-users.interface";
 import {IDataSelectorsDto, IDataTableDto, ISchemaDataTableDto, ISchemaRolesTableDto} from "@/dto/discord-users.dto";
 import {convertDateToString} from "@/helpers/common.helper";
+import {IFetchData} from "@/interfaces/components/data-table.interface";
 
 export const handleDragEnd = (event: DragEndEvent,
                               dataIds: UniqueIdentifier[],
@@ -49,6 +50,27 @@ export const getRowStatusByStatus = (status: string) => {
 }
 
 export const getDataByKey = (data: z.infer<typeof ISchemaDataTableDto>[], currentRol: string): z.infer<typeof ISchemaDataTableDto>[] => data.filter(data => data.roles.filter(rol => rol.name === currentRol).length);
+
+export const fetchData = async ({
+                                    setData,
+                                    setDefaultValueTab,
+                                    setDataSelectors
+                                }: IFetchData) => {
+    try {
+        const res = await fetch('/api/discord/users');
+        if (!res.ok) {
+            console.error('Network response was not ok');
+        }
+        const response = await res.json();
+        const data: IDataTableDto = discordUsersToDataTableDto(response);
+        setData(data);
+        const selectors = updateDataSelectors(getDataSelectors(data), data.data);
+        setDefaultValueTab(selectors[0]?.id.toString());
+        setDataSelectors(selectors);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
 
 export const getDataSelectors = ({data, roles}: Readonly<IDataTableDto>) => {
     let dataSelectors: IDataSelectorsDto[] = [];
@@ -115,3 +137,11 @@ export const discordUsersToDataTableDto = (data: IDiscordUsers[]): IDataTableDto
         roles: roleDto
     };
 }
+
+export const updateCountRefreshData = ({
+                                           setCountRefreshData,
+                                           delayToRefresh
+                                       }: {
+    setCountRefreshData: React.Dispatch<React.SetStateAction<number>>;
+    delayToRefresh: number;
+}): NodeJS.Timeout => setTimeout(() => setCountRefreshData(prev => prev + 1), delayToRefresh);
